@@ -1,6 +1,6 @@
 function [is_solution, joint_angles] = GeneralIK(robot, robotFK, num_joints, pos_desired)
     joint_angles = zeros(num_joints);
-    for i = 1:100
+    for i = 1:10
         pos_current = GetPos(robot, robotFK, joint_angles);
         delta_pos = pos_desired - pos_current;
         delta_theta = pinv(GetJacobian(robot, robotFK, joint_angles)) * delta_pos;
@@ -9,7 +9,7 @@ function [is_solution, joint_angles] = GeneralIK(robot, robotFK, num_joints, pos
 
     pos_current = GetPos(robot, robotFK, joint_angles);
     dpos = GetDiff(pos_desired, pos_current);
-    if (dpos < 0.05)
+    if (dpos < 0.005)
         is_solution = true;
     else
         is_solution = false;
