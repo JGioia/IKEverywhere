@@ -1,5 +1,5 @@
 function [is_solution, joint_angles] = GeneralIK(robot, robotFK, num_joints, pos_desired)
-    joint_angles = zeroes(num_joints);
+    joint_angles = zeros(num_joints);
     for i = 1:100
         pos_current = GetPos(robot, robotFK, joint_angles);
         delta_pos = pos_desired - pos_current;
@@ -16,12 +16,6 @@ function [is_solution, joint_angles] = GeneralIK(robot, robotFK, num_joints, pos
     end
 end
 
-function [pos] = GetPos(robot, robotFK, joint_angles)
-    T = robotFK(robot, joint_angles);
-    pos = T * [0; 0; 0; 1];
-    pos = [pos(1); pos(2); pos(3)];
-end
-
 function [jacobian] = GetJacobian(robot, robotFK, joint_angles)
     dx = [];
     dy = [];
@@ -31,9 +25,9 @@ function [jacobian] = GetJacobian(robot, robotFK, joint_angles)
     for i = 1:length(joint_angles)
         adjusted_angles = joint_angles;
         adjusted_angles(i) = adjusted_angles(i) - (dt / 2);
-        pos_1 = GetPos(robotFK, adjusted_angles);
+        pos_1 = GetPos(robot, robotFK, adjusted_angles);
         adjusted_angles(i) = adjusted_angles(i) + dt;
-        pos_2 = GetPos(robotFK, adjusted_angles);
+        pos_2 = GetPos(robot, robotFK, adjusted_angles);
         dpos = (pos_2 - pos_1) / dt;
         dx(1, i) = dpos(1);
         dy(1, i) = dpos(2);
